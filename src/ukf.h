@@ -127,6 +127,8 @@ class UKF {
 
     void PredictLidarMeasurement(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S);
 
+    void PredictMean(VectorXd& mean_vector, const MatrixXd& pred_sig_points);
+
     void UpdateStateRadar(
         const VectorXd& z, const MatrixXd& Zsig, const VectorXd& z_pred, const MatrixXd& S);
 
