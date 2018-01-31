@@ -186,20 +186,21 @@ void UKF::Prediction(double delta_t) {
  * @param {MeasurementPackage} meas_package
  */
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
-  /**
-  TODO:
 
-  Complete this function! Use lidar data to update the belief about the object's
-  position. Modify the state vector, x_, and covariance, P_.
-
-  You'll also need to calculate the lidar NIS.
-  */
+    // Getting lidar's data
     VectorXd z(2);
     z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1];
+
+    // Sigma points into measurement space
     MatrixXd Zsig = MatrixXd(2, 2 * n_aug_ + 1);
+    // Mean predicted measurement
     VectorXd z_pred = VectorXd(2);
+    // Innovation covariance matrix S
     MatrixXd S = MatrixXd(2, 2);
+
+    // Setting sigma points into measurement space, mean predicted measurement and innovation covariance matrix
     PredictLidarMeasurement(Zsig, z_pred, S);
+    // Updating the state vector, x_, and covariance, P_
     UpdateStateLidar(z, Zsig, z_pred, S);
 }
 
@@ -208,20 +209,21 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
  * @param {MeasurementPackage} meas_package
  */
 void UKF::UpdateRadar(MeasurementPackage meas_package) {
-  /**
-  TODO:
 
-  Complete this function! Use radar data to update the belief about the object's
-  position. Modify the state vector, x_, and covariance, P_.
-
-  You'll also need to calculate the radar NIS.
-  */
+    // Getting radar's data
     VectorXd z(3);
     z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], meas_package.raw_measurements_[2];
+
+    // Sigma points into measurement space
     MatrixXd Zsig = MatrixXd(3, 2 * n_aug_ + 1);
+    // Mean predicted measurement
     VectorXd z_pred = VectorXd(3);
+    // Innovation covariance matrix S
     MatrixXd S = MatrixXd(3, 3);
+
+    // Setting sigma points into measurement space, mean predicted measurement and innovation covariance matrix
     PredictRadarMeasurement(Zsig, z_pred, S);
+    // Updating the state vector, x_, and covariance, P_
     UpdateStateRadar(z, Zsig, z_pred, S);
 }
 
