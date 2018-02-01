@@ -25,10 +25,8 @@ class Tools {
     VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
 
     /**
-     * A helper method to convert from polar to cartesian coordinates.
+     * A helper method to normalize an angle in radians to the range [-M_PI, M_PI].
      */
-    VectorXd ConvertFromPolarToCartesian(const VectorXd& polar);
-
     void NormalizeAngle(double& angle);
 };
 

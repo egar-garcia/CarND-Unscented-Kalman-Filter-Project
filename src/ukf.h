@@ -111,30 +111,36 @@ class UKF {
 
   private:
 
-    /**
-     * Tool object used to do conversions between polar and cartesian coorinates
-     * and normalization of angles
-     */
+    ///* Tool object used to calculate RMSE and normalize angles
     Tools tools;
 
+    ///* Calculates augmented sigma points
     MatrixXd AugmentedSigmaPoints();
 
+    ///* Performs the prediction for the sigma points
     void SigmaPointPrediction(const MatrixXd& Xsig_aug, const double& delta_t);
 
+    ///* Predicts the mean and covariance from the predicted sigma points
     void PredictMeanAndCovariance();
 
+    ///* Sets sigma points into measurement space and predics from radar measurement
     void PredictRadarMeasurement(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S);
 
+    ///* Sets sigma points into measurement space and predics from lidar measurement
     void PredictLidarMeasurement(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S);
 
+    ///* Predicts mean vector from a set of sigma points
     void PredictMean(VectorXd& mean_vector, const MatrixXd& pred_sig_points);
 
+    ///* Updates the state vector, x_, and covariance, P_ from a radar measurement
     void UpdateStateRadar(
         const VectorXd& z, const MatrixXd& Zsig, const VectorXd& z_pred, const MatrixXd& S);
 
+    ///* Updates the state vector, x_, and covariance, P_ from a lidar measurement
     void UpdateStateLidar(
         const VectorXd& z, const MatrixXd& Zsig, const VectorXd& z_pred, const MatrixXd& S);
 
+    ///* Helper method to update mean and covariance matrix
     void UpdateStatestateMeanAndCovarianceMatrix(
         const MatrixXd& Tc, const MatrixXd& S, const VectorXd& z_diff);
 };

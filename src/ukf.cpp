@@ -19,12 +19,10 @@ UKF::UKF() {
     use_radar_ = true;
 
     // Process noise standard deviation longitudinal acceleration in m/s^2
-    //std_a_ = 30;
-    std_a_ = 5;
+    std_a_ = 1.5;
 
     // Process noise standard deviation yaw acceleration in rad/s^2
-    //std_yawdd_ = 30;
-    std_yawdd_ = 1;
+    std_yawdd_ = 0.3;
 
 
     //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
@@ -101,31 +99,21 @@ UKF::~UKF() {}
  * either radar or laser.
  */
 void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
-  /**
-  TODO:
 
-  Complete this function! Make sure you switch between lidar and radar
-  measurements.
-  */
     /*****************************************************************************
      *  Initialization
      ****************************************************************************/
     if (!is_initialized_) {
         // Initializing the state of x_ with the first measurement.
-
         if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
-            // Converting radar from polar to cartesian coordinates and initializing state.
-            VectorXd cartesian = tools.ConvertFromPolarToCartesian(meas_package.raw_measurements_);
-            //x_ << cartesian[0], cartesian[1], cartesian[2], cartesian[3];
-            x_ << cartesian[0], cartesian[1], 0, 0, 0;
-            //x_ << 0, 0, 0, 0, 0;
+            double rho = meas_package.raw_measurements_[0];
+            double phi = meas_package.raw_measurements_[1];
+            double rho_dot = meas_package.raw_measurements_[2];
+            // Using rho_dot as firts estimate of velocity
+            x_ << rho * cos(phi), rho * sin(phi), rho_dot, 0, 0;
         } else /* if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) */ {
-            // Initializing state directly from the messure.
-            x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1],
-                  0, 0, 0;
+            x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0, 0;
         }
-        //cout << "x_: " << endl << x_ << endl;
-        //cout << "P_: " << endl << P_ << endl;
 
         // Done with initializing, no need to predict or update
         time_us_ = meas_package.timestamp_;
@@ -133,6 +121,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
         return;
     }
 
+    // Checking the types of messures to ignore
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR && !use_radar_) {
         return;
     }
@@ -148,7 +137,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     // delta_t - expressed in seconds
     double delta_t = (meas_package.timestamp_ - time_us_) / 1000000.0;
     time_us_ = meas_package.timestamp_;
-
+    // Predicting the state and covariance matrix.
     Prediction(delta_t);
 
     /*****************************************************************************
@@ -156,7 +145,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     ****************************************************************************/
 
     // Using the sensor type to perform the update step.
-    // Updating the state and covariance matrices.
+    // Updating the state and covariance matrix.
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
         UpdateRadar(meas_package);
     } else {
@@ -170,16 +159,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
  * measurement and this one.
  */
 void UKF::Prediction(double delta_t) {
-  /**
-  TODO:
-
-  Complete this function! Estimate the object's location. Modify the state
-  vector, x_. Predict sigma points, the state, and the state covariance matrix.
-  */
+    // Getting sigma points
     MatrixXd Xsig_aug = AugmentedSigmaPoints();
+    // Performing the prediction for the sigma points
     SigmaPointPrediction(Xsig_aug, delta_t);
+    // Predict the mean and covariance from the predicted sigma points
     PredictMeanAndCovariance();
 }
+
 
 /**
  * Updates the state and the state covariance matrix using a laser measurement.
@@ -198,11 +185,12 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
     // Innovation covariance matrix S
     MatrixXd S = MatrixXd(2, 2);
 
-    // Setting sigma points into measurement space, mean predicted measurement and innovation covariance matrix
+    // Setting sigma points into measurement space and predicting measurement
     PredictLidarMeasurement(Zsig, z_pred, S);
     // Updating the state vector, x_, and covariance, P_
     UpdateStateLidar(z, Zsig, z_pred, S);
 }
+
 
 /**
  * Updates the state and the state covariance matrix using a radar measurement.
@@ -221,7 +209,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     // Innovation covariance matrix S
     MatrixXd S = MatrixXd(3, 3);
 
-    // Setting sigma points into measurement space, mean predicted measurement and innovation covariance matrix
+    // Setting sigma points into measurement space and predicting measurement
     PredictRadarMeasurement(Zsig, z_pred, S);
     // Updating the state vector, x_, and covariance, P_
     UpdateStateRadar(z, Zsig, z_pred, S);
@@ -303,11 +291,11 @@ void UKF::SigmaPointPrediction(const MatrixXd& Xsig_aug, const double& delta_t) 
         yawd_p = yawd_p + nu_yawdd * delta_t;
 
         // Writing predicted sigma point into right column
-        Xsig_pred_(0,i) = px_p;
-        Xsig_pred_(1,i) = py_p;
-        Xsig_pred_(2,i) = v_p;
-        Xsig_pred_(3,i) = yaw_p;
-        Xsig_pred_(4,i) = yawd_p;
+        Xsig_pred_(0, i) = px_p;
+        Xsig_pred_(1, i) = py_p;
+        Xsig_pred_(2, i) = v_p;
+        Xsig_pred_(3, i) = yaw_p;
+        Xsig_pred_(4, i) = yawd_p;
     }
 }
 

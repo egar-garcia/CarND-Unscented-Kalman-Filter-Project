@@ -40,20 +40,8 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     return rmse;
 }
 
-VectorXd Tools::ConvertFromPolarToCartesian(const VectorXd& polar) {
-    float rho = polar[0];
-    float phi = polar[1];
-    float rho_dot = polar[2];
-
-    VectorXd cartesian(4);
-    // Converting the polar coordinates to cartesian
-    cartesian << rho * cos(phi), rho * sin(phi), rho_dot * cos(phi), rho_dot * sin(phi);
-
-    return cartesian;
-}
-
 void Tools::NormalizeAngle(double& angle) {
-    while (angle >  M_PI) {
+    while (angle > M_PI) {
         angle -= 2.0 * M_PI;
     }
     while (angle < -M_PI) {
