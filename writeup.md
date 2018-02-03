@@ -23,7 +23,7 @@ mkdir build
 cd build
 cmake ..
 make
-./ExtendedKF
+./UnscentedKF
 ```
 
 Here is the main protocol that main.cpp uses for uWebSocketIO in communicating with the simulator.
