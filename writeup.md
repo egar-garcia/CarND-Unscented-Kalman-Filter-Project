@@ -1,4 +1,4 @@
-**Extended Kalman Filter Project**
+**Unscented Kalman Filter Project**
 
 
 Self-Driving Car Engineer Nanodegree Program
@@ -128,4 +128,4 @@ As part of this project I also accepted the challenge to try bonus challenge: Ca
 
 To resolve this challenge the strategy was to implement a couple of methods (```PredictAhead()``` and ```GetCatchingPoint```) to predict a point of intersection ahead in the future, considering the speed of the running car (which is expected to be the same as the one of the persecutor), so the point of intersection would be the estimated to cover the distance that separates the two vehicles, as the persecutor gets closer the estimate gets more accurate.
 
-The mechanism is that after executing the predict/update process, a prediction for a point of intersection takes place, then the persecutor vehicle is directed towards that point. 
+The mechanism is that after executing the predict/update process, a prediction for a point of intersection takes place, then the persecutor vehicle is directed towards that point.
