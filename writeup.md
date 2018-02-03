@@ -8,6 +8,7 @@ In this project is utilized an Unscented Kalman Filter to estimate the state of 
 [//]: # (Image References)
 [image1]: ./Docs/run_dataset1.png
 [image2]: ./Docs/run_dataset2.png
+[BonusChallengeVideo]: ./Docs/CatchTheRunAwayCar.mov
 
 ### Build
 
@@ -117,3 +118,14 @@ Initially with the default values given for process noise standard deviation lon
 Another values I was experimenting with, were the ones for the state covariance matrix, I started with the identity matrix (with ones in the diagonal), and tried reducing the values till trying with the ones produced after a full testing cycle. I could observed that the smaller the values the less accuracy in the final result, due to smaller values represent a high confidence in the measurement and that conflicts with the lack of precision of the first measurement. At the end the identity matrix with just ones in the diagonal produced the best results.
 
 The second set was specially complicated for getting an RMES under the passmark, particularly for the velocity. The solution to this problem was to set the velocity given by the first measurement (which in this case is from the radar) in the state. With this small change the RMES was reduced enormously even to beat the results of the first run. The general observation is that the lidar is better to estimate the position and the radar to estimate the velocity.
+
+
+## Bonus Challenge - Catch the Run Away Car with UKF
+
+As part of this project I also accepted the challenge to try bonus challenge: Catch the Run Away Car with UKF. My solution can be found at [https://github.com/egar-garcia/CarND-Catch-Run-Away-Car-UKF]( https://github.com/egar-garcia/CarND-Catch-Run-Away-Car-UKF), also a video of one execution can be found in the file ```Docs/CatchTheRunAwayCar.mov```
+
+![BonusChallengeVideo]
+
+To resolve this challenge the strategy was to implement a couple of methods (```PredictAhead()``` and ```GetCatchingPoint```) to predict a point of intersection ahead in the future, considering the speed of the running car (which is expected to be the same as the one of the persecutor), so the point of intersection would be the estimated to cover the distance that separates the two vehicles, as the persecutor gets closer the estimate gets more accurate.
+
+The mechanism is that after executing the predict/update process, a prediction for a point of intersection takes place, then the persecutor vehicle is directed towards that point. 
